@@ -1,0 +1,6 @@
+algorithm                 place		score	example_2	example_1	example_4	example_3	example_5
+hillclimbingfromlecture     1  	10	2	2	2	2	2
+randomsamplingfromlecture   2  	5	1	1	1	1	1
+stupidsinglerandomsample    3  	0	0	0	0	0	0
+
+Last Place to Receive Bonus: 1
