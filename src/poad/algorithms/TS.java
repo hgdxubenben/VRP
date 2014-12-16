@@ -17,6 +17,7 @@ import project.examples.TabuList;
 // end
 public class TS<G, X> extends OptimizationAlgorithm<G, X> {
   private IObjectiveFunction<X> f_Scenario;
+  public int tabuLength = 30;
 
   // start
   /** instantiate */
@@ -56,7 +57,7 @@ public class TS<G, X> extends OptimizationAlgorithm<G, X> {
     this.f_Scenario = f;
     Individual<G, X> pstar, pnew, pbest;
     double curProfit = 0, bestProfit = 0;
-    TabuList tabuList = new TabuList(2);
+    TabuList tabuList = new TabuList();
     // Solution curSolution , bestSolution;
 
     pstar = new Individual<>();

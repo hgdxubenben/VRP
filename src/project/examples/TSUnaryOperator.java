@@ -10,7 +10,7 @@ import project.framework.Solution;
  */
 public class TSUnaryOperator implements IUnarySearchOperation<Solution> {
 
-  /** Create. */ 
+  /** Create. */
   public TSUnaryOperator() {
     super();
   }
@@ -25,7 +25,8 @@ public class TSUnaryOperator implements IUnarySearchOperation<Solution> {
    */
   @Override
   public Solution mutate(Solution parent, TabuList tabuList) {
-   
+    //int[][] data = parent.copyData();
+    
     return null;
   }
 
