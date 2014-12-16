@@ -4,6 +4,7 @@ package poad.G.bits;
 import java.util.Random;
 
 import poad.IUnarySearchOperation;
+import project.examples.TabuList;
 
 /** a unary search operation that randomly flipping bits in a bit string */
 // end
@@ -45,5 +46,11 @@ public class BitsUnaryProbFlip implements IUnarySearchOperation<boolean[]> {// s
     }
 
     return g; // return new bit string
+  }
+
+  @Override
+  public boolean[] mutate(boolean[] parent, TabuList tabuList) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

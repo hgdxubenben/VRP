@@ -44,4 +44,10 @@ public class ExampleUnaryOperator implements IUnarySearchOperation<Solution> {
     return new Solution(data);
   }
 
+  @Override
+  public Solution mutate(Solution parent, TabuList tabuList) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 }
