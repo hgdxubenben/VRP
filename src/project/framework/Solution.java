@@ -127,6 +127,11 @@ public final class Solution {
     return c;
   }
 
+  public final void moveData(int sx, int sy, int dx,int dy) {
+   int temp = this.m_schedules[dx][dy];
+   this.m_schedules[dx][dy] = this.m_schedules[sx][sy];
+   this.m_schedules[sx][sy] = temp;
+  }
   /**
    * Print the solution to a print stream
    * 

@@ -2,13 +2,12 @@ package project.examples;
 
 //based on this paper:  Solving the pickup and delivery problem with time windows using reactive tabu search
 
-
+@SuppressWarnings("unqualified-field-access")
 public class TabuList {
 
   int[][] tabuList;
   int tabuLength = 0;
 
-  @SuppressWarnings("unqualified-field-access")
   public TabuList() {
     int orderNumber = ExampleNullaryOperator.scenario.orderCount();
     int carNumber = ExampleNullaryOperator.scenario.carCount();
@@ -20,20 +19,30 @@ public class TabuList {
     }
   } 
 
-  @SuppressWarnings("unqualified-field-access")
-  public void tabuMove(int pos1, int pos2) { // tabus the swap operation
-    tabuList[pos1][pos2] = tabuLength;
-    tabuList[pos2][pos1] = tabuLength;
 
+  public void tabuMove(int order, int newS, int newD, int iterator) { // tabus the swap operation
+    tabuList[order][newS] = tabuLength + iterator;
+    tabuList[order][newD] = tabuLength + iterator;
   }
-
-  @SuppressWarnings("unqualified-field-access")
-  public void decrementTabu() {
-    for (int i = 0; i < tabuList.length; i++) {
-      for (int j = 0; j < tabuList.length; j++) {
-        tabuList[i][j] -= tabuList[i][j] <= 0 ? 0 : 1;
-      }
+  public void tabuMove2(int order, int newS, int iterator) { // tabus the swap operation
+    tabuList[order][newS] = tabuLength + iterator;
+  }
+  
+//  public void decrementTabu() {
+//    for (int i = 0; i < tabuList.length; i++) {
+//      for (int j = 0; j < tabuList.length; j++) {
+//        tabuList[i][j] -= tabuList[i][j] <= 0 ? 0 : 1;
+//      }
+//    }
+//  }
+  
+  @SuppressWarnings("boxing")
+  public Boolean shouldTabu(int order, int newS, int newD, int iterator){
+    if(this.tabuList[order][newS]<=iterator || this.tabuList[order][newD]<=iterator){
+      return true;
     }
+    
+    return false;
   }
 
 }

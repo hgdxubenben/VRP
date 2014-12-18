@@ -3,7 +3,6 @@ package poad;
 
 import java.util.Random;
 
-import project.examples.TabuList;
 
 /**
  * A search operation which receives one point in the search space and creates a modified copy of
@@ -30,5 +29,5 @@ public interface IUnarySearchOperation<G> {// start
   public abstract G mutate(final G parent, //
       final Random r);
 
-  public abstract G mutate(final G parent, final TabuList tabuList);
+  public abstract G mutate(final G parent);
 }

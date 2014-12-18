@@ -4,7 +4,6 @@ package poad.algorithms;
 import poad.IObjectiveFunction;
 import poad.Individual;
 import poad.OptimizationAlgorithm;
-import project.examples.TabuList;
 
 /**
  * a hill climbing algorithm, exactly as taught in the class
@@ -27,26 +26,26 @@ public class TS<G, X> extends OptimizationAlgorithm<G, X> {
 
   // find the best move for the current solution
   @SuppressWarnings("unused")
-  private Individual<G, X> getBestNeighbour(Individual<G, X> initSolution, TabuList tabuList) {
+  private Individual<G, X> getBestNeighbour(Individual<G, X> initSolution) {
     Individual<G, X> bestNeighbour = new Individual<>(), pnew = new Individual<>();
     // initial the best neighbour to the first neighbour
-    pnew.g = this.unary.mutate(initSolution.g, tabuList);
+    pnew.g = this.unary.mutate(initSolution.g);
     pnew.x = this.gpm.gpm(pnew.g);
     pnew.v = this.f_Scenario.compute(pnew.x);
     bestNeighbour = pnew;
 
-    while (true) {
-      pnew.g = this.unary.mutate(initSolution.g, tabuList);
-      //we have found all the neighbours
-      if(pnew.g == null){
-        break;
-      }
-      pnew.x = this.gpm.gpm(pnew.g);
-      pnew.v = this.f_Scenario.compute(pnew.x);
-      if (pnew.v > bestNeighbour.v) {
-        bestNeighbour = pnew;
-      }
-    }
+//    while (true) {
+//      pnew.g = this.unary.mutate(initSolution.g, tabuList);
+//      //we have found all the neighbours
+//      if(pnew.g == null){
+//        break;
+//      }
+//      pnew.x = this.gpm.gpm(pnew.g);
+//      pnew.v = this.f_Scenario.compute(pnew.x);
+//      if (pnew.v > bestNeighbour.v) {
+//        bestNeighbour = pnew;
+//      }
+//    }
     return bestNeighbour;
   }
 
@@ -57,7 +56,7 @@ public class TS<G, X> extends OptimizationAlgorithm<G, X> {
     this.f_Scenario = f;
     Individual<G, X> pstar, pnew, pbest;
     double curProfit = 0, bestProfit = 0;
-    TabuList tabuList = new TabuList();
+   
     // Solution curSolution , bestSolution;
 
     pstar = new Individual<>();
@@ -66,10 +65,11 @@ public class TS<G, X> extends OptimizationAlgorithm<G, X> {
     pstar.g = this.nullary.create(this.random);
     pstar.x = this.gpm.gpm(pstar.g);
     pstar.v = f.compute(pstar.x);
+    //Neighbours getNeighbours = new Neighbours(parent.copyData(), tabuList);
 
     while (!(this.termination.shouldTerminate())) {
 
-      pnew = getBestNeighbour(pnew , tabuList);
+      pnew = getBestNeighbour(pnew);
       curProfit = f.compute(pnew.x);
       if (curProfit > bestProfit) {
         bestProfit = curProfit;

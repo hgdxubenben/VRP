@@ -15,11 +15,13 @@ import project.framework.Solution;
 public class TabuSearch extends TS<Solution, Solution> {
 
   /** create */
+  @SuppressWarnings({
+      "rawtypes", "unchecked" })
   public TabuSearch() {
     super();
     //TODO we need to define our own nullary and unary, let's begin this afternoon
-    this.nullary = new ExampleNullaryOperator();
-    this.unary = new TSUnaryOperator();
+   // this.nullary = new ExampleNullaryOperator();
+    this.unary = new TSUnaryOperator(); 
   }
 
   /** {@inheritDoc} */

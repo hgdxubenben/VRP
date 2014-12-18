@@ -134,6 +134,14 @@ public final class Scenario implements IObjectiveFunction<Solution> {
   public final int orderWeight(final int index) {
     return this.m_orders[index][Scenario.ORDER_WEIGHT_INDEX];
   }
+  public final int[] getAllOrderWeight() {
+    int orderCount =  this.m_orders.length;
+    int[] orderWeight = new int[orderCount];
+    for(int i=0;i<orderCount;++i){
+      orderWeight[i] = this.m_orders[i][Scenario.ORDER_WEIGHT_INDEX];
+    }
+    return orderWeight;
+  }
 
   /**
    * Get the amount of money we can earn by picking up the order.
@@ -164,6 +172,9 @@ public final class Scenario implements IObjectiveFunction<Solution> {
    */
   public final int carCapacity(final int index) {
     return this.m_cars[index];
+  }
+  public final int[] getAllCarCapacity() {
+    return this.m_cars;
   }
 
   /**
@@ -216,6 +227,13 @@ public final class Scenario implements IObjectiveFunction<Solution> {
     cl[loc2] = d = ((int) (0.5d + Math.ceil(Math.sqrt((x * x) + (y * y)))));
 
     return d;
+  }
+  
+  public final int travelCostDiff(final int location1, final int location2, final int location3) {
+    return travelCost(location1,location2)+travelCost(location1,location3)-travelCost(location3,location2);
+  }
+  public final int travelCostDiff(final int location1, final int location2, final int location3, final int location4) {
+    return travelCost(location1,location2)+travelCost(location1,location3)+travelCost(location2,location4)-travelCost(location3,location4);
   }
 
   /**

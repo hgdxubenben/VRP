@@ -4,7 +4,7 @@ package poad.G.permutations;
 import java.util.Random;
 
 import poad.IUnarySearchOperation;
-import project.examples.TabuList;
+
 
 /** a unary search operation that randomly swapping elements in a permutation */
 // end
@@ -41,7 +41,7 @@ public class PermutationUnarySingleSwap implements IUnarySearchOperation<int[]> 
   }
 
   @Override
-  public int[] mutate(int[] parent, TabuList tabuList) {
+  public int[] mutate(int[] parent) {
     // TODO Auto-generated method stub
     return null;
   }

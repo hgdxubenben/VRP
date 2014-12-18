@@ -4,7 +4,7 @@ package poad.G.Rn;
 import java.util.Random;
 
 import poad.IUnarySearchOperation;
-import project.examples.TabuList;
+
 
 /** a unary search operation that copies and modifies an existing vector */
 // end
@@ -37,7 +37,7 @@ public final class RnUnaryNormal extends Rn implements IUnarySearchOperation<dou
   }
 
   @Override
-  public double[] mutate(double[] parent, TabuList tabuList) {
+  public double[] mutate(double[] parent) {
     // TODO Auto-generated method stub
     return null;
   }
