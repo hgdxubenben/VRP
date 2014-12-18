@@ -1,5 +1,6 @@
 package project.examples;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import poad.INullarySearchOperation;
@@ -14,11 +15,11 @@ import project.framework.Solution;
 @SuppressWarnings("unused")
 public class TSUnaryOperator<G> implements IUnarySearchOperation<Solution> {
 
-  private static int[] carCapacity = ExampleNullaryOperator.scenario.getAllCarCapacity();
-  private static int carNum = ExampleNullaryOperator.scenario.carCount();
-  private static int orderNum = ExampleNullaryOperator.scenario.orderCount();
-  private static int[] orderWeight = ExampleNullaryOperator.scenario.getAllOrderWeight();
-  private static int N = 2 * orderNum + carNum + 1;
+  private static int[] carCapacity;
+  private static int carNum;
+  private static int orderNum;
+  private static int[] orderWeight;
+  private static int N;
   private static int[] initSolutionArray;
   private static int[] availCapacity;
   private static int[][] orderMap;
@@ -31,12 +32,24 @@ public class TSUnaryOperator<G> implements IUnarySearchOperation<Solution> {
   public TSUnaryOperator() {
     super();
     ExampleNullaryOperator nullary = new ExampleNullaryOperator();
+    TSUnaryOperator.carCapacity = ExampleNullaryOperator.scenario.getAllCarCapacity();
+    TSUnaryOperator.carNum = ExampleNullaryOperator.scenario.carCount();
+    TSUnaryOperator.orderNum = ExampleNullaryOperator.scenario.orderCount();
+    TSUnaryOperator.N = 2 * orderNum + carNum + 1;
+
+    TSUnaryOperator.orderWeight = ExampleNullaryOperator.scenario.getAllOrderWeight();
     TSUnaryOperator.initSolutionArray = nullary.getStartSolutionArray();
     TSUnaryOperator.availCapacity = nullary.getStartAvailCapacity();
     TSUnaryOperator.orderMap = nullary.getStartOrderMap();
     TSUnaryOperator.initLocaton = nullary.getStartLocation();
     TSUnaryOperator.initSolution = nullary.getStartSolution();
     TSUnaryOperator.tabuList = new TabuList();
+
+    int[] aa = new int[30];
+    for (int i = 0; i < 30; i++)
+      aa[i] = i;
+    System.out.println(Arrays.toString(aa));
+    System.out.println(Arrays.toString(initSolutionArray));
   }
 
   /**
@@ -67,7 +80,10 @@ public class TSUnaryOperator<G> implements IUnarySearchOperation<Solution> {
       s = orderMap[i][0];
       d = orderMap[i][1];
       for (j = 1; j < N; ++j) {
+        if (j == s) j = d + 1;
         for (k = j; k < N; ++k) {
+          if (j < s && k == s - 1) break;
+
           if (initSolutionArray[k] < orderNum) {
             // check whether the car can load the new insert order
             if (availCapacity[k - 1] < orderWeight[i]) {
@@ -85,6 +101,10 @@ public class TSUnaryOperator<G> implements IUnarySearchOperation<Solution> {
                 pos2 = d;
                 newpos1 = j;
                 newpos2 = k;
+                if (newpos1 == newpos2) {
+                  if (newpos1 > pos1) newpos1--;
+                  if (newpos1 < pos1) newpos2++;
+                }
                 orderMovS = i;
               }
             }
@@ -100,15 +120,15 @@ public class TSUnaryOperator<G> implements IUnarySearchOperation<Solution> {
 
     update();
 
-    int [][] returnResult= new int [carNum][];
-    for(i =0 ;i < carNum ;++i){
-      int carStart = orderMap[2*orderNum +i +1 ][0];
-      int nextCarStart = orderMap[2*orderNum +i +1 +1][0];
-      int len = nextCarStart - carStart -1;
-      if(len == 0)continue;
-      int [] result = new int [len];
-      for(j = 0; j <len ;++j){
-        result[j] = initSolutionArray[carStart+1+j];
+    int[][] returnResult = new int[carNum][];
+    for (i = 0; i < carNum; ++i) {
+      int carStart = orderMap[orderNum + i + 1][0];
+      int nextCarStart = orderMap[orderNum + i + 1 + 1][0];
+      int len = nextCarStart - carStart - 1;
+      if (len == 0) continue;
+      int[] result = new int[len];
+      for (j = 0; j < len; ++j) {
+        result[j] = initSolutionArray[carStart + 1 + j];
       }
       returnResult[i] = result;
     }
@@ -125,78 +145,61 @@ public class TSUnaryOperator<G> implements IUnarySearchOperation<Solution> {
     // construct the new solution
     int min = pos1 < newpos1 ? pos1 : newpos1;
     int max = pos2 > newpos2 ? pos2 : newpos2;
-    int[] tempSolution = new int[max - min + 1];
-    int[] tempLocation = new int[max - min + 1];
-    int[] tempAvailCapciy = new int[max - min + 1];
+    int[] tempSolution = new int[max + 1];
+    int[] tempLocation = new int[max + 1];
+    int[] tempAvailCapciy = new int[max + 1];
     int i = 0, j = 0;
 
+    int dif = 0;
     for (i = 0; i < 5; i++) {
       orderMap[initSolutionArray[pos1]][i] = orderMap[initSolutionArray[newpos1]][i];
       orderMap[initSolutionArray[pos2]][i] = orderMap[initSolutionArray[newpos2]][i];
     }
+    if (pos1 < newpos1) {
+      for (i = min + 1; i <= max; ++i) {
+        if (i < pos2) dif = -1;
+        else if (i == pos2) dif = 0;
+        else if (i < newpos1 + 2) dif = -2;
+        else dif = -1;
 
-    for (i = pos1 + 1; i < pos2; i++) {
-      if (initSolutionArray[i] > 2 * orderNum) {
-        orderMap[initSolutionArray[i]][0]--;
-        continue;
+        if (initSolutionArray[i] > orderNum) {
+          orderMap[initSolutionArray[i]][0] = orderMap[initSolutionArray[i]][0] + dif;
+          continue;
+        }
+        if (i == orderMap[initSolutionArray[i]][0]) {
+          orderMap[initSolutionArray[i]][0] = orderMap[initSolutionArray[i]][0] + dif;
+          orderMap[initSolutionArray[i]][3] = orderMap[initSolutionArray[i]][3] + dif;
+        } else if (i == orderMap[initSolutionArray[i]][1]) {
+          orderMap[initSolutionArray[i]][1] = orderMap[initSolutionArray[i]][1] + dif;
+          orderMap[initSolutionArray[i]][4] = orderMap[initSolutionArray[i]][4] + dif;
+        } else {
+          System.out.println("ERROR in the orderMap");
+        }
       }
+    } else {
 
-      if (i == orderMap[initSolutionArray[i]][0]) {
-        orderMap[initSolutionArray[i]][0]--;
-        orderMap[initSolutionArray[i]][3]--;
-      } else if (i == orderMap[initSolutionArray[i]][1]) {
-        orderMap[initSolutionArray[i]][2]--;
-        orderMap[initSolutionArray[i]][4]--;
-      } else {
-        System.out.println("ERROR in the orderMap");
-      }
-    }
-    for (i = pos2 + 1; i <= max; i++) {
-      if (initSolutionArray[i] > 2 * orderNum) {
-        orderMap[initSolutionArray[i]][0] = orderMap[initSolutionArray[i]][0] - 2;
-        continue;
-      }
-      if (i == orderMap[initSolutionArray[i]][0]) {
-        orderMap[initSolutionArray[i]][0] = orderMap[initSolutionArray[i]][0] - 2;
-        orderMap[initSolutionArray[i]][3] = orderMap[initSolutionArray[i]][3] - 2;
-      } else if (i == orderMap[initSolutionArray[i]][1]) {
-        orderMap[initSolutionArray[i]][2] = orderMap[initSolutionArray[i]][2] - 2;
-        orderMap[initSolutionArray[i]][4] = orderMap[initSolutionArray[i]][4] - 2;
-      } else {
-        System.out.println("ERROR in the orderMap");
-      }
-    }
+      for (i = min; i < max; ++i) {
+        if (i <= newpos2 - 2) dif = 1;
+        else if (i < pos1) dif = 2;
+        else if (i == pos1) dif = 0;
+        else dif = 1;
 
-    for (i = newpos1 + 1; i < newpos2; i++) {
-      if (initSolutionArray[i] > 2 * orderNum) {
-        orderMap[initSolutionArray[i]][0]++;
-        continue;
-      }
-      if (i == orderMap[initSolutionArray[i]][0]) {
-        orderMap[initSolutionArray[i]][0]++;
-        orderMap[initSolutionArray[i]][3]++;
-      } else if (i == orderMap[initSolutionArray[i]][1]) {
-        orderMap[initSolutionArray[i]][2]++;
-        orderMap[initSolutionArray[i]][4]++;
-      } else {
-        System.out.println("ERROR in the orderMap");
-      }
-    }
-    for (i = newpos2 + 1; i <= max; i++) {
-      if (initSolutionArray[i] > 2 * orderNum) {
-        orderMap[initSolutionArray[i]][0] = orderMap[initSolutionArray[i]][0] + 2;
-        continue;
-      }
-      if (i == orderMap[initSolutionArray[i]][0]) {
-        orderMap[initSolutionArray[i]][0] = orderMap[initSolutionArray[i]][0] + 2;
-        orderMap[initSolutionArray[i]][3] = orderMap[initSolutionArray[i]][3] + 2;
-      } else if (i == orderMap[initSolutionArray[i]][1]) {
-        orderMap[initSolutionArray[i]][2] = orderMap[initSolutionArray[i]][2] + 2;
-        orderMap[initSolutionArray[i]][4] = orderMap[initSolutionArray[i]][4] + 2;
-      } else {
-        System.out.println("ERROR in the orderMap");
+        if (initSolutionArray[i] > orderNum) {
+          orderMap[initSolutionArray[i]][0] = orderMap[initSolutionArray[i]][0] + dif;
+          continue;
+        }
+        if (i == orderMap[initSolutionArray[i]][0]) {
+          orderMap[initSolutionArray[i]][0] = orderMap[initSolutionArray[i]][0] + dif;
+          orderMap[initSolutionArray[i]][3] = orderMap[initSolutionArray[i]][3] + dif;
+        } else if (i == orderMap[initSolutionArray[i]][1]) {
+          orderMap[initSolutionArray[i]][1] = orderMap[initSolutionArray[i]][1] + dif;
+          orderMap[initSolutionArray[i]][4] = orderMap[initSolutionArray[i]][4] + dif;
+        } else {
+          System.out.println("ERROR in the orderMap");
+        }
       }
     }
+    
 
     i = min;
     while (i < pos1) {
@@ -318,3 +321,73 @@ public class TSUnaryOperator<G> implements IUnarySearchOperation<Solution> {
   }
 
 }
+
+// for (i = pos1 + 1; i < pos2; i++) {
+// if (initSolutionArray[i] > 2 * orderNum) {
+// orderMap[initSolutionArray[i]][0]--;
+// continue;
+// }
+//
+// if (i == orderMap[initSolutionArray[i]][0]) {
+// orderMap[initSolutionArray[i]][0]--;
+// orderMap[initSolutionArray[i]][3]--;
+// } else if (i == orderMap[initSolutionArray[i]][1]) {
+// orderMap[initSolutionArray[i]][1]--;
+// orderMap[initSolutionArray[i]][4]--;
+// } else {
+// System.out.println("ERROR in the orderMap");
+// }
+// }
+// for (i = pos2 + 1; i <= max; i++) {
+// if (initSolutionArray[i] > 2 * orderNum) {
+// orderMap[initSolutionArray[i]][0] = orderMap[initSolutionArray[i]][0] - 2;
+// continue;
+// }
+// if (i == orderMap[initSolutionArray[i]][0]) {
+// orderMap[initSolutionArray[i]][0] = orderMap[initSolutionArray[i]][0] - 2;
+// orderMap[initSolutionArray[i]][3] = orderMap[initSolutionArray[i]][3] - 2;
+// } else if (i == orderMap[initSolutionArray[i]][1]) {
+// orderMap[initSolutionArray[i]][1] = orderMap[initSolutionArray[i]][1] - 2;
+// orderMap[initSolutionArray[i]][4] = orderMap[initSolutionArray[i]][4] - 2;
+// } else {
+// System.out.println("ERROR in the orderMap");
+// }
+// }
+//
+// for (i = newpos1; i <= newpos2; i++) {
+// if(newpos1 == newpos2 -1 )continue;
+//
+// if (initSolutionArray[i] > 2 * orderNum) {
+// orderMap[initSolutionArray[i]][0]++;
+// continue;
+// }
+// if (i == orderMap[initSolutionArray[i]][0]) {
+// orderMap[initSolutionArray[i]][0]++;
+// orderMap[initSolutionArray[i]][3]++;
+// } else if (i == orderMap[initSolutionArray[i]][1]) {
+// orderMap[initSolutionArray[i]][1]++;
+// orderMap[initSolutionArray[i]][4]++;
+// } else {
+// System.out.println("ERROR in the orderMap");
+// }
+// }
+// for (i = newpos2; i <= max; i++) {
+// if (initSolutionArray[i] > 2 * orderNum) {
+// orderMap[initSolutionArray[i]][0] = orderMap[initSolutionArray[i]][0] + 2;
+// continue;
+// }
+// if (i == orderMap[initSolutionArray[i]][0]) {
+// orderMap[initSolutionArray[i]][0] = orderMap[initSolutionArray[i]][0] + 2;
+// orderMap[initSolutionArray[i]][3] = orderMap[initSolutionArray[i]][3] + 2;
+// } else if (i == orderMap[initSolutionArray[i]][1]) {
+// orderMap[initSolutionArray[i]][1] = orderMap[initSolutionArray[i]][1] + 2;
+// orderMap[initSolutionArray[i]][4] = orderMap[initSolutionArray[i]][4] + 2;
+// } else {
+// System.out.println("ERROR in the orderMap");
+// }
+// }
+//
+// for (i = 0; i < 5; i++) {
+// orderMap[initSolutionArray[pos1]][i] = orderMap[initSolutionArray[newpos1]][i];
+// orderMap[initSolutionArray[pos2]][i] = orderMap[initSolutionArray[newpos2]][i];
+// }

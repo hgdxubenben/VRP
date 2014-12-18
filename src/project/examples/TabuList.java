@@ -39,10 +39,10 @@ public class TabuList {
   @SuppressWarnings("boxing")
   public Boolean shouldTabu(int order, int newS, int newD, int iterator){
     if(this.tabuList[order][newS]<=iterator || this.tabuList[order][newD]<=iterator){
-      return true;
+      return false;
     }
     
-    return false;
+    return true;
   }
 
 }

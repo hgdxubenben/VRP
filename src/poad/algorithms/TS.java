@@ -29,7 +29,7 @@ public class TS<G, X> extends OptimizationAlgorithm<G, X> {
   private Individual<G, X> getBestNeighbour(Individual<G, X> initSolution) {
     Individual<G, X> bestNeighbour = new Individual<>(), pnew = new Individual<>();
     // initial the best neighbour to the first neighbour
-    pnew.g = this.unary.mutate(initSolution.g);
+    pnew.g = this.unary.mutate(null);
     pnew.x = this.gpm.gpm(pnew.g);
     pnew.v = this.f_Scenario.compute(pnew.x);
     bestNeighbour = pnew;
@@ -54,6 +54,7 @@ public class TS<G, X> extends OptimizationAlgorithm<G, X> {
   // end
   public Individual<G, X> solve(final IObjectiveFunction<X> f) {
     this.f_Scenario = f;
+    @SuppressWarnings("unused")
     Individual<G, X> pstar, pnew, pbest;
     double curProfit = 0, bestProfit = 0;
    
@@ -62,12 +63,14 @@ public class TS<G, X> extends OptimizationAlgorithm<G, X> {
     pstar = new Individual<>();
     pnew = new Individual<>();
     pbest = new Individual<>();
-    pstar.g = this.nullary.create(this.random);
-    pstar.x = this.gpm.gpm(pstar.g);
-    pstar.v = f.compute(pstar.x);
+//    pstar.g = this.nullary.create(this.random);
+//    pstar.x = this.gpm.gpm(pstar.g);
+//    pstar.v = f.compute(pstar.x);
     //Neighbours getNeighbours = new Neighbours(parent.copyData(), tabuList);
 
-    while (!(this.termination.shouldTerminate())) {
+   // while (!(this.termination.shouldTerminate())) {
+    int iiii = 0;
+    while (iiii ++ <100) {
 
       pnew = getBestNeighbour(pnew);
       curProfit = f.compute(pnew.x);

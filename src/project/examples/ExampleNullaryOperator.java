@@ -68,6 +68,7 @@ public class ExampleNullaryOperator implements INullarySearchOperation<Solution>
   private void prepareData(){
     int carNum = scenario.carCount(), orderNum = scenario.orderCount();
     int N = carNum + 2 * orderNum + 1;
+    N++;
     int[] start = new int[N];
     int[] availCapacity = new int[N];
     int [][] order = new int[N][5];
@@ -113,6 +114,7 @@ public class ExampleNullaryOperator implements INullarySearchOperation<Solution>
       }
 
     }
+    order[orderNum + i + 1][0] = index;
     this.startState = start;
     this.availCapacityNow = availCapacity;
     this.orderMap = order;

@@ -21,13 +21,16 @@ public class TabuSearch extends TS<Solution, Solution> {
     super();
     //TODO we need to define our own nullary and unary, let's begin this afternoon
    // this.nullary = new ExampleNullaryOperator();
-    this.unary = new TSUnaryOperator(); 
+   
   }
 
   /** {@inheritDoc} */
+  @SuppressWarnings({
+      "rawtypes", "unchecked" })
   @Override
   public final Individual<Solution, Solution> solve(final IObjectiveFunction<Solution> f) {
     ExampleNullaryOperator.scenario = ((Scenario) f);
+    this.unary = new TSUnaryOperator(); 
     return super.solve(f);
   }
 
