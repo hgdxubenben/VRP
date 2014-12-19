@@ -49,7 +49,7 @@ public class TSUnaryOperator<G> implements IUnarySearchOperation<Solution> {
     for (int i = 0; i < 30; i++)
       aa[i] = i;
     System.out.println(Arrays.toString(aa));
-    System.out.println(Arrays.toString(initSolutionArray));
+
   }
 
   /**
@@ -69,6 +69,8 @@ public class TSUnaryOperator<G> implements IUnarySearchOperation<Solution> {
 
   @SuppressWarnings("boxing")
   private Solution getBestNeighbour() {
+    System.out.println(orderMovS + " " + pos1 + " " + pos2 + " " + newpos1 + " " + newpos2);
+    System.out.println(Arrays.toString(initSolutionArray));
     int i, j, k, p, s, d;
     int curBenefit = 0, bestBenefit = Integer.MIN_VALUE;
     Boolean flag1 = true;
@@ -79,9 +81,12 @@ public class TSUnaryOperator<G> implements IUnarySearchOperation<Solution> {
     for (i = 0; i < orderNum; ++i) {
       s = orderMap[i][0];
       d = orderMap[i][1];
-      for (j = 1; j < N; ++j) {
-        if (j == s) j = d + 1;
-        for (k = j; k < N; ++k) {
+      if (s == d) {
+        System.out.println("======"+i+" "+s+" "+d);
+      }
+      for (j = 1; j < N-2; ++j) {
+        if (j >= s - 1 && j < d) j = d + 1;
+        for (k = j + 1; k < N; ++k) {
           if (j < s && k == s - 1) break;
 
           if (initSolutionArray[k] < orderNum) {
@@ -91,20 +96,16 @@ public class TSUnaryOperator<G> implements IUnarySearchOperation<Solution> {
                 flag2 = true;
               } else flag2 = false;
             } else {
+
               if (tabuList.shouldTabu(i, j, orderMap[i][0], iterator)
-                  && tabuList.shouldTabu(i + orderNum, k, orderMap[i][1], iterator)) continue;
+                  || tabuList.shouldTabu(i + orderNum, k, orderMap[i][1], iterator)) continue;
               curBenefit = calculateProfit(s, d, j, k);
               if (curBenefit > bestBenefit) {
-
                 bestBenefit = curBenefit;
                 pos1 = s;
                 pos2 = d;
                 newpos1 = j;
                 newpos2 = k;
-                if (newpos1 == newpos2) {
-                  if (newpos1 > pos1) newpos1--;
-                  if (newpos1 < pos1) newpos2++;
-                }
                 orderMovS = i;
               }
             }
@@ -114,6 +115,9 @@ public class TSUnaryOperator<G> implements IUnarySearchOperation<Solution> {
           }
           if (flag2 == false) break;
         }
+        
+        flag1 = true;
+        flag2 = true;
 
       }
     }
@@ -122,8 +126,8 @@ public class TSUnaryOperator<G> implements IUnarySearchOperation<Solution> {
 
     int[][] returnResult = new int[carNum][];
     for (i = 0; i < carNum; ++i) {
-      int carStart = orderMap[orderNum + i + 1][0];
-      int nextCarStart = orderMap[orderNum + i + 1 + 1][0];
+      int carStart = orderMap[orderNum + i ][0];
+      int nextCarStart = orderMap[orderNum + i  + 1][0];
       int len = nextCarStart - carStart - 1;
       if (len == 0) continue;
       int[] result = new int[len];
@@ -132,9 +136,12 @@ public class TSUnaryOperator<G> implements IUnarySearchOperation<Solution> {
       }
       returnResult[i] = result;
     }
+    
+ //   System.out.println("Best benefit: "+bestBenefit);
     return new Solution(returnResult);
   }
 
+  @SuppressWarnings("boxing")
   private void update() {
     tabuList.tabuMove(orderMovS, newpos1, orderMap[orderMovS][0], iterator);
     // ltabuList.tabuMove(orderMovS + orderNUm, newpos2, orderMap[orderMovS][1]);
@@ -149,127 +156,70 @@ public class TSUnaryOperator<G> implements IUnarySearchOperation<Solution> {
     int[] tempLocation = new int[max + 1];
     int[] tempAvailCapciy = new int[max + 1];
     int i = 0, j = 0;
-
     int dif = 0;
-    for (i = 0; i < 5; i++) {
-      orderMap[initSolutionArray[pos1]][i] = orderMap[initSolutionArray[newpos1]][i];
-      orderMap[initSolutionArray[pos2]][i] = orderMap[initSolutionArray[newpos2]][i];
-    }
-    if (pos1 < newpos1) {
-      for (i = min + 1; i <= max; ++i) {
-        if (i < pos2) dif = -1;
-        else if (i == pos2) dif = 0;
-        else if (i < newpos1 + 2) dif = -2;
-        else dif = -1;
+    int pos1Location, pos2Location, pos1Order;
 
-        if (initSolutionArray[i] > orderNum) {
-          orderMap[initSolutionArray[i]][0] = orderMap[initSolutionArray[i]][0] + dif;
+    pos1Location = initLocaton[pos1];
+    pos2Location = initLocaton[pos2];
+    pos1Order = initSolutionArray[pos1];
+    if (pos1 < newpos1) {
+      for (i = min; i <= max; i++) {
+        if (i >= pos2 - 1 && i <= newpos1 - 1) dif = 2;
+        else if (i == newpos1) {
+          initLocaton[i] = pos1Location;
+          initSolutionArray[i] = pos1Order;
           continue;
-        }
-        if (i == orderMap[initSolutionArray[i]][0]) {
-          orderMap[initSolutionArray[i]][0] = orderMap[initSolutionArray[i]][0] + dif;
-          orderMap[initSolutionArray[i]][3] = orderMap[initSolutionArray[i]][3] + dif;
-        } else if (i == orderMap[initSolutionArray[i]][1]) {
-          orderMap[initSolutionArray[i]][1] = orderMap[initSolutionArray[i]][1] + dif;
-          orderMap[initSolutionArray[i]][4] = orderMap[initSolutionArray[i]][4] + dif;
-        } else {
-          System.out.println("ERROR in the orderMap");
-        }
+        } else if (i == newpos2) {
+          initLocaton[i] = pos2Location;
+          initSolutionArray[i] = pos1Order;
+          continue;
+        } else dif = 1;
+
+        initLocaton[i] = initLocaton[i + dif];
+        initSolutionArray[i] = initSolutionArray[i + dif];
       }
     } else {
-
-      for (i = min; i < max; ++i) {
-        if (i <= newpos2 - 2) dif = 1;
-        else if (i < pos1) dif = 2;
-        else if (i == pos1) dif = 0;
-        else dif = 1;
-
-        if (initSolutionArray[i] > orderNum) {
-          orderMap[initSolutionArray[i]][0] = orderMap[initSolutionArray[i]][0] + dif;
+      for (i = max; i >= min; i--) {
+        if (i <= pos1 + 1 && i >= newpos2 + 1) dif = -2;
+        else if (i == newpos1) {
+          initLocaton[i] = pos1Location;
+          initSolutionArray[i] = pos1Order;
           continue;
-        }
-        if (i == orderMap[initSolutionArray[i]][0]) {
-          orderMap[initSolutionArray[i]][0] = orderMap[initSolutionArray[i]][0] + dif;
-          orderMap[initSolutionArray[i]][3] = orderMap[initSolutionArray[i]][3] + dif;
-        } else if (i == orderMap[initSolutionArray[i]][1]) {
-          orderMap[initSolutionArray[i]][1] = orderMap[initSolutionArray[i]][1] + dif;
-          orderMap[initSolutionArray[i]][4] = orderMap[initSolutionArray[i]][4] + dif;
-        } else {
-          System.out.println("ERROR in the orderMap");
-        }
+        } else if (i == newpos2) {
+          initLocaton[i] = pos2Location;
+          initSolutionArray[i] = pos1Order;
+          continue;
+        } else dif = -1;
+
+        initLocaton[i] = initLocaton[i + dif];
+        initSolutionArray[i] = initSolutionArray[i + dif];
       }
     }
-    
 
-    i = min;
-    while (i < pos1) {
-      tempAvailCapciy[j] = availCapacity[i];
-      tempLocation[j] = initLocaton[i];
-      tempSolution[j++] = initSolutionArray[i];
-      i++;
-    }
-    tempAvailCapciy[j] = availCapacity[i] + orderWeight[initSolutionArray[pos1]];
-    i++;
-    while (i < pos2) {
-      tempAvailCapciy[j + 1] = availCapacity[i] + orderWeight[initSolutionArray[pos1]];
-      tempLocation[j] = initLocaton[i];
-      tempSolution[j++] = initSolutionArray[i];
-      i++;
-    }
-    tempAvailCapciy[j + 1] = availCapacity[i] + orderWeight[initSolutionArray[pos1]];
-    i++;
-    while (i <= max) {
-      tempAvailCapciy[j + 2] = availCapacity[i];
-      tempLocation[j] = initLocaton[i];
-      tempSolution[j++] = initSolutionArray[i];
-      i++;
-    }
+    for (i = min; i <= max; i++) {
+      if (initSolutionArray[i] > orderNum) {
+        if (pos1 < newpos1) dif = -2;
+        else dif = 2;
+        orderMap[initSolutionArray[i]][0] = orderMap[initSolutionArray[i]][0] + dif;
+        continue;
+      }
 
-    i = max;
-    while (i > newpos2) {
-      tempLocation[i] = initLocaton[i - 2];
-      tempSolution[i] = tempSolution[i - 2];
-      i--;
+      if (  orderMap[initSolutionArray[i]][0] >= min && orderMap[initSolutionArray[i]][5] !=1) {
+        availCapacity[i] = availCapacity[i - 1] - orderWeight[initSolutionArray[i]];
+        orderMap[initSolutionArray[i]][3] = orderMap[initSolutionArray[i]][3] + i
+            - orderMap[initSolutionArray[i]][0];
+        orderMap[initSolutionArray[i]][0] = i;
+        orderMap[initSolutionArray[i]][5] = 1;
+      } else {
+        availCapacity[i] = availCapacity[i - 1] + orderWeight[initSolutionArray[i]];
+        orderMap[initSolutionArray[i]][4] = orderMap[initSolutionArray[i]][4] + i
+            - orderMap[initSolutionArray[i]][1];
+        orderMap[initSolutionArray[i]][1] = i;
+      }
     }
-    tempAvailCapciy[i] = tempAvailCapciy[i] - orderWeight[initSolutionArray[pos1]];
-    tempLocation[i] = initLocaton[pos2];
-    tempSolution[i--] = initSolutionArray[pos2];
-    while (i > newpos1) {
-      tempAvailCapciy[i] = tempAvailCapciy[i] - orderWeight[initSolutionArray[pos1]];
-      tempLocation[i] = initLocaton[i - 1];
-      tempSolution[i] = tempSolution[i - 1];
-      i--;
+    for (i = min; i <= max; i++) {
+      orderMap[initSolutionArray[i]][5] = 0;
     }
-    tempAvailCapciy[i] = tempAvailCapciy[i] - orderWeight[initSolutionArray[pos1]];
-    tempLocation[i] = initLocaton[pos1];
-    tempSolution[i] = initSolutionArray[pos1];
-
-    for (i = min; i <= max; ++i) {
-      availCapacity[i] = tempAvailCapciy[i];
-      initLocaton[i] = tempLocation[i];
-      initSolutionArray[i] = tempSolution[i];
-    }
-
-    // // updata the initSolution TODO:bug here
-    // initSolution.moveData(orderMap[initLocaton[pos1]][2], orderMap[initLocaton[pos1]][3],
-    // orderMap[initLocaton[newpos1]][2], orderMap[initLocaton[newpos1]][3]);
-    // initSolution.moveData(orderMap[initLocaton[pos2]][2], orderMap[initLocaton[pos2]][4],
-    // orderMap[initLocaton[newpos2]][2], orderMap[initLocaton[newpos2]][4]);
-    //
-    // // update the orderMap TODO:Bug here
-    // int i = 0;
-    // for (i = 2; i < 5; ++i) {
-    // int temp = orderMap[initLocaton[pos1]][i];
-    // orderMap[initLocaton[pos1]][i] = orderMap[initLocaton[newpos1]][i];
-    // orderMap[initLocaton[newpos1]][i] = temp;
-    // }
-    // for (i = 2; i < 5; ++i) {
-    // int temp = orderMap[initLocaton[pos2]][i];
-    // orderMap[initLocaton[pos2]][i] = orderMap[initLocaton[newpos2]][i];
-    // orderMap[initLocaton[newpos2]][i] = temp;
-    // }
-    //
-    // int weightGap = orderWeight[initLocaton[pos1]] - orderWeight[initLocaton[newpos1]];
   }
 
   private int calculateProfit(int s, int d, int newS, int newD) {
@@ -285,18 +235,31 @@ public class TSUnaryOperator<G> implements IUnarySearchOperation<Solution> {
           initLocaton[s - 1], initLocaton[d + 1]);
     }
 
-    if (newD - newS != 1) {
-      distDiffnewS = ExampleNullaryOperator.scenario.travelCostDiff(initLocaton[s],
-          initLocaton[newS - 1], initLocaton[newS + 1]);
-      distDiffnewD = ExampleNullaryOperator.scenario.travelCostDiff(initLocaton[d],
-          initLocaton[newD - 1], initLocaton[newD + 1]);
+    if (newS > s) {
+      if (newD - newS != 1) {
+        distDiffnewS = ExampleNullaryOperator.scenario.travelCostDiff(initLocaton[s],
+            initLocaton[newS + 1], initLocaton[newS + 2]);
+        distDiffnewD = ExampleNullaryOperator.scenario.travelCostDiff(initLocaton[d],
+            initLocaton[newD], initLocaton[newD + 1]);
+      } else {
+        distDiffnewD = ExampleNullaryOperator.scenario.travelCostDiff(initLocaton[s],
+            initLocaton[d], initLocaton[newD], initLocaton[newD + 1]);
+      }
+
     } else {
-      distDiffnewD = ExampleNullaryOperator.scenario.travelCostDiff(initLocaton[s], initLocaton[d],
-          initLocaton[newS - 1], initLocaton[newD + 1]);
+      if (newD - newS != 1) {
+        distDiffnewS = ExampleNullaryOperator.scenario.travelCostDiff(initLocaton[s],
+            initLocaton[newS - 1], initLocaton[newS]);
+        distDiffnewD = ExampleNullaryOperator.scenario.travelCostDiff(initLocaton[d],
+            initLocaton[newD - 2], initLocaton[newD - 1]);
+      } else {
+        distDiffnewD = ExampleNullaryOperator.scenario.travelCostDiff(initLocaton[s],
+            initLocaton[d], initLocaton[newS - 1], initLocaton[newS]);
+      }
     }
 
     distDiff = distDiffs + distDiffd - distDiffnewS - distDiffnewD;
-    return distDiff;
+    return -distDiff;
   }
 
   @Override

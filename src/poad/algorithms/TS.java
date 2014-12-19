@@ -68,15 +68,16 @@ public class TS<G, X> extends OptimizationAlgorithm<G, X> {
 //    pstar.v = f.compute(pstar.x);
     //Neighbours getNeighbours = new Neighbours(parent.copyData(), tabuList);
 
-   // while (!(this.termination.shouldTerminate())) {
-    int iiii = 0;
-    while (iiii ++ <100) {
+    while (!(this.termination.shouldTerminate())) {
+    //int iiii = 0;
+    //while (iiii ++ <100) {
 
       pnew = getBestNeighbour(pnew);
       curProfit = f.compute(pnew.x);
       if (curProfit > bestProfit) {
         bestProfit = curProfit;
         pbest = pnew;
+        //System.out.println("****************iterator:"+iiii+"*****************");
       }
 
     }

@@ -13,10 +13,13 @@ public class TabuList {
     int carNumber = ExampleNullaryOperator.scenario.carCount();
     int N =  2*orderNumber + carNumber +1;
     // the row index identifies the customer, and the column index depicts the solution position
+    
+    tabuLength = orderNumber;
     tabuList = new int[N][N]; 
     if (tabuLength > 30) {
       tabuLength = 30;
     }
+    tabuLength = 5;
   } 
 
 

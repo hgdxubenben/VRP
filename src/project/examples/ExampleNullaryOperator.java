@@ -71,7 +71,7 @@ public class ExampleNullaryOperator implements INullarySearchOperation<Solution>
     N++;
     int[] start = new int[N];
     int[] availCapacity = new int[N];
-    int [][] order = new int[N][5];
+    int [][] order = new int[N - orderNum][6];
     int[] location = new int[N];
     
     int[] carCapacity = ExampleNullaryOperator.scenario.getAllCarCapacity();
@@ -81,15 +81,15 @@ public class ExampleNullaryOperator implements INullarySearchOperation<Solution>
     int i = 0, j = 0, index = 0, lenCow = startArray.length, lenCol = 0, capcity =0 ;
     for (; i < carNum; ++i) {
       capcity =  carCapacity[i];
-      start[index] = orderNum + i + 1;
+      start[index] = orderNum + i;
       availCapacity[index] = capcity;
-      order[orderNum + i + 1][0] = index;
+      order[orderNum + i][0] = index;
       location[index] = 0;
       index++;
       if (i >= lenCow) continue;
       lenCol = startArray[i].length;
       int orderN = 0;
-      for (; j < lenCol; ++j) {
+      for (j=0; j < lenCol; ++j) {
         orderN = startArray[i][j];
         start[index] = orderN;
         
@@ -114,7 +114,7 @@ public class ExampleNullaryOperator implements INullarySearchOperation<Solution>
       }
 
     }
-    order[orderNum + i + 1][0] = index;
+    order[orderNum + i ][0] = index;
     this.startState = start;
     this.availCapacityNow = availCapacity;
     this.orderMap = order;

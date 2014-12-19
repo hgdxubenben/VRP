@@ -1,5 +1,5 @@
--209750.0
-Infinity
+284477.0
+334156.0
 Infinity
 Infinity
 Infinity
