@@ -3,7 +3,10 @@
 // -------------- SOLUTION DATA --------------
 // Car ID: Order1, Order2, Order3, ...
 
-0: 18 26 19 19 1 1 26 9 18 9 7 7 27 15 15 24 27 21 21 20 10 10 4 25 25 20 24 16 16 12 12 3 3 29 13 29 17 6 6 17 2 22 22 4 13 23 11 11 23 14 0 0 5 8 8 5 2 28 28 14
+0: 19 19 8 3 3 23 25 25 8 29 9 29 23 14 26 14 12 12 15 15 13 26 13 22 22 27 9 27 0 0 21 21 11 11 5 10 10 4 2 4 2 5 16 16 20 28 20 6 6 7 7 18 28 18
+1: 17 17
+2: 24 24
+3: 1 0
 
 // A solution conaints schedules for one or multiple cars.
 // A car schedule is a list of order IDs and it tells the cars what to do.

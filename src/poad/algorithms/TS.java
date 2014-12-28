@@ -70,11 +70,11 @@ public class TS<G, X> extends OptimizationAlgorithm<G, X> {
 
     while (!(this.termination.shouldTerminate())) {
     //int iiii = 0;
-    //while (iiii ++ <100) {
+    //while (iiii ++ <100000) {
 
       pnew = getBestNeighbour(pnew);
       curProfit = f.compute(pnew.x);
-      if (curProfit > bestProfit) {
+      if (curProfit < bestProfit) {
         bestProfit = curProfit;
         pbest = pnew;
         //System.out.println("****************iterator:"+iiii+"*****************");

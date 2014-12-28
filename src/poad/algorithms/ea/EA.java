@@ -40,7 +40,6 @@ public class EA<G, X> extends OptimizationAlgorithm<G, X> {// start
   }// start
 
   /** {@inheritDoc} */
-  @SuppressWarnings("unchecked")
   @Override
   // end
   public Individual<G, X> solve(final IObjectiveFunction<X> f) {

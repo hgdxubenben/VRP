@@ -69,8 +69,8 @@ public class TSUnaryOperator<G> implements IUnarySearchOperation<Solution> {
 
   @SuppressWarnings("boxing")
   private Solution getBestNeighbour() {
-    System.out.println(orderMovS + " " + pos1 + " " + pos2 + " " + newpos1 + " " + newpos2);
-    System.out.println(Arrays.toString(initSolutionArray));
+    //System.out.println(orderMovS + " " + pos1 + " " + pos2 + " " + newpos1 + " " + newpos2);
+   // System.out.println(Arrays.toString(initSolutionArray));
     int i, j, k, p, s, d;
     int curBenefit = 0, bestBenefit = Integer.MIN_VALUE;
     Boolean flag1 = true;
@@ -85,11 +85,14 @@ public class TSUnaryOperator<G> implements IUnarySearchOperation<Solution> {
         System.out.println("======"+i+" "+s+" "+d);
       }
       for (j = 1; j < N-2; ++j) {
+        if(j>N-5){
+          int ii=0;
+        }
         if (j >= s - 1 && j < d) j = d + 1;
-        for (k = j + 1; k < N; ++k) {
+        for (k = j + 1; k < N-2; ++k) {
           if (j < s && k == s - 1) break;
 
-          if (initSolutionArray[k] < orderNum) {
+          if (initSolutionArray[k] < orderNum || j==k-1) {
             // check whether the car can load the new insert order
             if (availCapacity[k - 1] < orderWeight[i]) {
               if (k >= orderMap[i][0] && k < orderMap[i][1]) {
@@ -121,7 +124,7 @@ public class TSUnaryOperator<G> implements IUnarySearchOperation<Solution> {
 
       }
     }
-
+    
     update();
 
     int[][] returnResult = new int[carNum][];
@@ -141,7 +144,6 @@ public class TSUnaryOperator<G> implements IUnarySearchOperation<Solution> {
     return new Solution(returnResult);
   }
 
-  @SuppressWarnings("boxing")
   private void update() {
     tabuList.tabuMove(orderMovS, newpos1, orderMap[orderMovS][0], iterator);
     // ltabuList.tabuMove(orderMovS + orderNUm, newpos2, orderMap[orderMovS][1]);
@@ -259,7 +261,7 @@ public class TSUnaryOperator<G> implements IUnarySearchOperation<Solution> {
     }
 
     distDiff = distDiffs + distDiffd - distDiffnewS - distDiffnewD;
-    return -distDiff;
+    return distDiff;
   }
 
   @Override

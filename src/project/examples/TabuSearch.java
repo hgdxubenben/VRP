@@ -15,8 +15,6 @@ import project.framework.Solution;
 public class TabuSearch extends TS<Solution, Solution> {
 
   /** create */
-  @SuppressWarnings({
-      "rawtypes", "unchecked" })
   public TabuSearch() {
     super();
     //TODO we need to define our own nullary and unary, let's begin this afternoon
@@ -42,7 +40,9 @@ public class TabuSearch extends TS<Solution, Solution> {
    * @throws Throwable
    *           if something goes wrong
    */
+  //@SuppressWarnings("boxing")
   public static final void main(final String[] args) throws Throwable {
+    //args[2]=Long.toString(System.currentTimeMillis()+10000);
     ExperimentRunner.main(new TabuSearch(), args);
   }
 
